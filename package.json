@@ -1,8 +1,8 @@
 {
   "name": "Examiner-system",
-  "version": "0.0.0",
-  "author": "顺毛喵 <284942955@qq.com>",
-  "description": "An electron-vue project",
+  "version": "1.0.0",
+  "author": "温州群创网络有限公司",
+  "description": "考官抽签系统",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "Examiner-system",
+    "productName": "考官抽签系统",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"
@@ -44,7 +44,7 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/superman.png"
+      "icon": "build/icons/bitbug.png"
     },
     "linux": {
       "icon": "build/icons"

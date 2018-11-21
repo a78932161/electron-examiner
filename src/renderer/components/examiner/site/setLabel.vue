@@ -45,7 +45,15 @@
                     if (docs.length>0) {
                         this.$db.find({}, (err, docs1) => {
                             if (docs1.length>0) {
-                                this.$router.push('/rule');
+                                this.$db4.findOne({}, (err, ret) => {
+                                    console.log(ret);
+                                    if(ret.kgAmount!=0){
+                                        this.$router.push('/rule');
+                                    }else{
+                                        alert('请设置考官数!');
+                                    }
+                                });
+
                             } else {
                                 alert('请导入考官数据!');
                             }
@@ -54,6 +62,7 @@
                         alert('请导入考点数据!');
                     }
                 });
+
             }
         },
         mounted() {

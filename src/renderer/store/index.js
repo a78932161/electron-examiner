@@ -13,7 +13,6 @@ Vue.use(Vuex);
 
 
 const store=new Vuex.Store({
-
     getters,
     strict:debug,
     plugins:debug?[createLogger()]:[]

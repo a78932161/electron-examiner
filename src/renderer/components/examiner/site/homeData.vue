@@ -89,18 +89,12 @@
                                         break;
                                     }
                                     currentArr.push(arr[i]);
-
                                 }
                                 this.goods = currentArr;//显示的数据
-
                             }
                         });
-
-
                     }
                 });
-
-
             },
 
             clickPage(){

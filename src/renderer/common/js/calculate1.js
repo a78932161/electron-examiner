@@ -124,16 +124,11 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
                 });
             })
         });
-         var lastresult=_.sortBy(printablesiteinfos, function (siteinfo) {
+        return _.sortBy(printablesiteinfos, function (siteinfo) {
             siteinfo.number2="0"+siteinfo.number;
             return siteinfo.number * 100 + siteinfo.index
         });
-
-         if(!_.isArray(lastresult) || lastresult.length<1){
-            throw new Error(JSON.stringify({errorcode:4,msg:"抽签不成功"}));
-        }
         //console.log(printablesiteinfos);
-        return lastresult;
 
     }
 
@@ -226,42 +221,14 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
         }
     }
 
-    /**
-     * 检查条件是否有可能匹配,如果标签考官指定的某类别考官人数都不够，那就抛出异常。
-     */
-    var checkruleavaliable=function(avaliablekaoguans){
-        //把各区所需的标签考官人数做个统计
-        //再看统计人数是否足够，如果不够，则直接抛出错误
-        var tagcountmap=_.groupBy(tagrules,function(g){return g[3];});
-        console.log(tagcountmap);
-        var tagcountmap=_.each(tagcountmap,function(v,k,obj){
-            obj[k]=_.reduce(v,function(s,item){return item[2]+s;},0);
-        });
-        console.log(tagcountmap);
-        _.each(avaliablekaoguans, function (kg) {
-            _.each(kg.考官类别数组,function(lb){
-                if(_.has(tagcountmap,lb)){//如果需要该类考官，则减1；
-                    tagcountmap[lb]--;
-                }
-            })
-        })
-        console.log(tagcountmap);
-        if(_.max(tagcountmap)>0){ //人数都不够
-            throw new Error(JSON.stringify({errorcode:2,msg:"标签考官初检没通过!"}));
-        }
-    }
-
     /*启动总的计算*/
     var calculate = function () {
         initdataandsorttagrule();
         var dist = initdist();
         var avaliablekaoguans = initkaoguans();
         var starttime=new Date().getTime();
-        //如果一开始就不满足则直接崩盘
-        checkruleavaliable(avaliablekaoguans);
         for (var i = 0; i < (avaliablekaoguans.length * avaliablekaoguans.length); i++) {
-            //console.log(i);
-
+            console.log(i);
             var result = matchtagrules(deepclone(dist), _.shuffle(avaliablekaoguans));
             if (result) {
                 console.log(_.map(result, function (m) {
@@ -280,7 +247,7 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
                     continue;
                 }
             }else{
-                checkvalidduration()
+                checkvalidduration();
             }
         }
         return false;
@@ -471,7 +438,6 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
 
     /*根据标签规则，分配标签考官*/
     var matchtagrules = function (dist, avaliablekaoguans) {
-
         for (var i = 0; i < tagrules.length; i++) {
             var rule = tagrules[i];
             //得到规则相关联的区域名称
@@ -480,19 +446,18 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
             });
             var areaname = areaobj.name;
             //过滤满足可去区域的标签考官
-            //TODO 标签考官是否可以重复算？比如说某组需要一个教师考官，一个公安考官，那选中了一个教师（同时也是公安）考官后，还需要再选公安考官吗？\
-            //当前似乎是可以重复算的。
+            //TODO 标签考官是否可以重复算？比如说某组需要一个教师考官，一个公安考官，那选中了一个教师（同时也是公安）考官后，还需要再选公安考官吗？
             var tagkaoguans = _.filter(avaliablekaoguans, function (kg) {
                 return (_.contains(kg.考官类别数组,rule[3]) &&
-            (_.contains(kg.avaliableareas, areaname) || areaname == "市本级"));
-        });
+                (_.contains(kg.avaliableareas, areaname) || areaname == "市本级"));
+            });
             if (tagkaoguans && tagkaoguans.length >= rule[2]) {
                 var selectedkgs = tagkaoguans.slice(0, rule[2]);
-                //var tempkgs = _.union(areaobj[rule[1]], selectedkgs);
+                var tempkgs = _.union(areaobj[rule[1]], selectedkgs);
 
                 var tempareakgs=deepclone(areaobj[rule[1]]);
                 var tempareakgsnotavaliable=_.find(selectedkgs, function (kg) {
-                    if(checksiteavaliable(tempareakgs,kg)){//是否可以放入
+                    if(checksiteavaliable(tempareakgs,kg)){
                         tempareakgs.push(kg);
                         return false;
                     }else{
@@ -515,7 +480,6 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
             }
 
         }
-
         for (var j = 0; j < avaliablekaoguans.length*avaliablekaoguans.length; j++) {
             checkvalidduration();
             var deepdist = deepclone(dist);
@@ -526,7 +490,7 @@ window.calculateprintablesiteinfos= function (itemcount, regions, tagrules, kaog
         return false;
     }
 
-//匹配主考官/男女考官/地区考官
+
     var matcharealkaoguan = function (newdist, avaliablekaoguans) {
         var kggroup = _.groupBy(avaliablekaoguans, function (kg) {
             if (_.contains(kg.考官类别数组, "主考官")) {

@@ -30,11 +30,11 @@ export default new Router({
         {path: '/rule', component: _import('examiner/site/rule')},
         {path: '/homeData', component: _import('examiner/site/homeData')},
         {path: '/login', component: _import('examiner/site/login')},
-        {path: '/transition', component: _import('examiner/site/transition')},
         {
             path: '/home', component: _import('examiner/site/home'), children: [
                 {path: '/homeEnd', component: _import('examiner/site/homeEnd')},
                 {path: '/homeImg', component: _import('examiner/site/homeImg')},
+                {path: '/transition', component: _import('examiner/site/transition')},
             ]
         },
 

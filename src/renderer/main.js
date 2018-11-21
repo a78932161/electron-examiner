@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 import App from './App'
-import {db,db1,psw,title,setting,labData} from './datastore';
+import {db,db1,psw,title,setting,labData,imgData} from './datastore';
 import router from './router'
 import store from './store'
 import 'underscore/underscore-min';
@@ -16,6 +16,7 @@ Vue.prototype.$db2 = psw;
 Vue.prototype.$db3 = title;
 Vue.prototype.$db4 = setting;
 Vue.prototype.$db5 = labData;
+Vue.prototype.$db6 = imgData;
 
 Vue.config.productionTip = false;
 

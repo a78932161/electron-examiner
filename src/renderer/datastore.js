@@ -34,5 +34,10 @@ let labData = new Datastore({
     filename: path.join(remote.app.getAppPath(), '..', '/data5.db')
 });
 
+let imgData = new Datastore({
+    autoload: true,
+    filename: path.join(remote.app.getAppPath(), '..', '/data6.db')
+});
 
-export {db, db1, psw, title, setting, labData};
+
+export {db, db1, psw, title, setting, labData,imgData};

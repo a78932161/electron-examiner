@@ -35,7 +35,8 @@
                 </div>
                 <div style="margin: 20px 0 0 0; ">
                     <button style="margin: 0 80px 0 0;color: black" @click="addData()">添加</button>
-                    <button style="color:black" @click="wcData">完成设置</button>
+                    <button style="margin: 0 80px 0 0;color: black" @click="wcData">完成设置</button>
+                    <button style="color:black" @click="goindex">返回</button>
                 </div>
             </div>
             <div class="content-right2">
@@ -45,11 +46,7 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
-
 </template>
 
 <script>
@@ -74,10 +71,11 @@
                 selected3: '',
                 regions: [],
                 tagrules: [],
-                kaoguans:[],
+                kaoguans: [],
                 itemcount: 0,
-                tbData:[],
-                endData:[],
+                tbData: [],
+                endData: [],
+                itemok: '',
 
             }
         },
@@ -88,7 +86,7 @@
         methods: {
             getList() {
                 this.$db.find({}, (err, docs) => {
-                    if(docs.length>0){
+                    if (docs.length > 0) {
                         this.$db1.find({}, (err, docs) => {
                             docs.forEach((value) => {
                                 this.a1.push({txt: value['考点名称'], value: value['考点名称']});
@@ -107,11 +105,13 @@
                         this.$db4.findOne({}, (err, ret) => {
                             if (ret !== null) {
                                 this.itemcount = ret.kgAmount;
+                                this.itemok = (ret.value == 'true');
+                                console.log(this.itemok);
                             } else {
                                 alert('没有设置数量!');
                             }
                         });
-                    }else{
+                    } else {
                         alert('没有导入数据');
                     }
                 })
@@ -148,18 +148,20 @@
                 }
             },
             scData(data) {
-               let a=data.results;
-                a.forEach((value)=>{
-                    this.tagrules.push([value['考点'],value['考场号'],value['考官人数'],value['考官标签']]);
+                let a = data.results;
+                a.forEach((value) => {
+                    this.tagrules.push([value['考点'], value['考场号'], value['考官人数'], value['考官标签']]);
                     this.tbData.push(value);
                 });
+
                 alert('导入成功!');
             },
             wcData() {
-                if(this.regions && this.tagrules && this.kaoguans && this.itemcount){
-                    this.endData=calculateprintablesiteinfos(this.itemcount,this.regions,this.tagrules,this.kaoguans);
-                    if(this.endData){
-                        this.endData.sort(function(a, b){
+                if (this.regions && this.tagrules && this.kaoguans && this.itemcount) {
+                    try {
+                        this.endData = calculateprintablesiteinfos(this.itemcount, this.regions, this.tagrules, this.kaoguans, this.itemok);
+                        //在这里运行代码
+                        this.endData.sort(function (a, b) {
                             if (a.number === b.number) {
                                 return b.index - a.index;
                             } else {
@@ -169,10 +171,9 @@
                         this.endData.reverse();
                         this.endData.forEach((value) => {
                             for (let a = 0; a < value.kgs.length; a++) {
-                                value.kgs[a]['职务']=value.name+'第'+value.index+'组';
+                                value.kgs[a]['职务'] = value.name + '第' + value.index + '组';
                             }
                         });
-
                         this.$db5.remove({}, {multi: true}, function (err, numRemoved) {
                         });
                         this.$db5.insert(this.endData, function (err, newDocs) {
@@ -181,13 +182,17 @@
                         console.log(this.endData);
                         this.$router.push('/setLabel');
                         alert("抽签成功!");
-                    }else{
-                        alert("抽签失败!");
                     }
-
+                    catch (err) {
+                        console.log(err);
+                        alert(JSON.parse(err.message).msg);
+                        //在这里处理错误
+                    }
                 }
-
             },
+            goindex(){
+                this.$router.push('/setLabel')
+            }
         },
         mounted() {
             this.getList();

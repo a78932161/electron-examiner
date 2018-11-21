@@ -3,6 +3,7 @@
         <div class="b2">
             <label v-bind:style="{fontSize: size + 'px'}">{{title}}</label>
         </div>
+
         <div class="b1">
             <button @click="start()">一键抽取面试室</button>
         </div>
@@ -10,6 +11,7 @@
 </template>
 
 <script>
+
     export default {
         name: "home-img",
         data() {
@@ -21,8 +23,8 @@
         methods: {
             start() {
                 this.$db5.find({}, (err, docs) => {
-                    if (docs.length>0) {
-                         this.$router.push('/transition');
+                    if (docs.length > 0) {
+                        this.$router.push('/transition');
                     } else {
                         alert('抽签失败!请前往后台设置');
                     }
@@ -31,12 +33,12 @@
         },
         created() {
             this.$db3.find({}, (err, docs) => {
-                if (docs.length>0) {
+                if (docs.length > 0) {
                     this.title = docs[0].title;
                     this.size = docs[0].size;
                 } else {
                     this.title = '这是默认的哦';
-                    this.size=60;
+                    this.size = 60;
                 }
             });
         }

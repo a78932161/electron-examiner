@@ -288,7 +288,7 @@
     .b2 {
         text-align: center;
         color: white;
-        margin:8% 0 29% 0;
+        margin:8% 0 25% 0;
     }
 
     #button1 {
@@ -302,6 +302,5 @@
         text-align: center;
         border: 1px solid black;
         color: #ffffff;
-
     }
 </style>
